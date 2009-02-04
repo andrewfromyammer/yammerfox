@@ -1,0 +1,10 @@
+#include "nsISupports.idl"
+
+[scriptable, uuid(8d09b431-8d73-4683-a570-8374f7b795dc)]
+
+interface nsIYammerFox : nsISupports 
+{ 
+  AString getBaseURL();
+  long    getUnreadCount();
+  long    getCookieStatus();
+};

@@ -1,0 +1,553 @@
+<?xml version="1.0"?>
+<!DOCTYPE overlay SYSTEM "chrome://yammerfox/locale/yammerfox.dtd">
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:html="http://www.w3.org/1999/xhtml"
+          xmlns:xbl="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <binding id="yammerfox-notice">
+    <content>
+      <xul:vbox class="yammerfox-notice-box">
+  <xul:hbox align="center">
+    <xul:image class="yammerfox-notice-check"/>
+    <xul:description class="yammerfox-notice-message" xbl:inherits="value" />
+  </xul:hbox>
+      </xul:vbox>
+    </content>
+  </binding>
+
+  <binding id="yammerfox-status">
+    <content>
+      <xul:menupopup id="yammerfox-status-menupopup">
+        <xul:menuitem label="&yammerfox.copyYam;" oncommand="gYammerFox.copyYam(this)"/>
+        <xul:menuitem label="&yammerfox.openYamInTab;" oncommand="gYammerFox.openYam(this)"/>
+      </xul:menupopup>
+
+      <xul:stack flex="1" class="yammerfox-status-hbox-container"
+     onclick="gYammerFox.onBalloonClick(event)"
+                 context="yammerfox-status-menupopup">
+  <xul:box>
+    <!-- user icon -->
+    <xul:vbox flex="1">
+      <xul:stack>
+        <xul:image class="yammerfox-status-usericon" align="top" 
+       xbl:inherits="src=profile_image_url, tooltiptext=name, href, unread" />
+      </xul:stack>
+      <xul:spacer flex="1" />
+    </xul:vbox>
+    <!-- messages -->
+    <xul:vbox class="yammerfox-status-messagebox" 
+        xbl:inherits="tooltiptext=tooltip">
+      <xul:description class="yammerfox-status-user" 
+           xbl:inherits="value=screen_name,tooltiptext=tooltip,href=thread_url" />
+      <xul:description class="yammerfox-status-message" xbl:inherits="tooltiptext=tooltip">
+        <children />
+      </xul:description>
+      <xul:description class="yammerfox-status-time" xbl:inherits="value=time,href=web_url" />
+    </xul:vbox>
+  </xul:box>
+
+  <!-- function icons -->
+  <xul:vbox anonid="function-icons" style="left: 240px; width: 16px; display: none;">
+    <xul:image class="yammerfox-status-reply" 
+         onclick="gYammerFox.onReply(this); return false;" 
+         tooltiptext="&yammerfox.replyButton.tooltip;" 
+         xbl:inherits="name,messageId,attr,type"/>
+  </xul:vbox>
+      </xul:stack>
+    </content>
+
+    <handlers>
+      <handler event="mouseover">
+        this.functionIcons.style.display = "block";
+  gYammerFox.onBalloonMouseOver(event);
+      </handler>
+      <handler event="mouseout">
+        this.functionIcons.style.display = "none";
+  gYammerFox.onBalloonMouseOut(event);
+      </handler>
+    </handlers>
+
+    <implementation>
+      <field name="functionIcons">
+        document.getAnonymousElementByAttribute(this, "anonid", "function-icons");
+      </field>
+    </implementation>
+  </binding>
+
+  <binding id="yammerfox-toolbar">
+    <content>
+      <xul:hbox align="center" flex="1">
+  <xul:image class="yammerfox-linkbutton" 
+       tooltiptext="&yammerfox.linkButton.tooltip;"
+       onclick="gYammerFox.onInsertURL()"/>
+  <xul:description anonid="timeline" class="yammerfox-tab"
+       defaultvalue="&yammerfox.myfeed;"
+       onclick="gYammerFox.changeTab('timeline')"/>
+<!--  <xul:description anonid="replies" class="yammerfox-tab"
+       tooltiptext="&yammerfox.replies.tooltip;" 
+       defaultvalue="&yammerfox.sent;"
+       onclick="gYammerFox.changeTab('replies')"/>
+      <xul:description anonid="messages" class="yammerfox-tab"
+       tooltiptext="&yammerfox.messages.tooltip;"
+       defaultvalue="Messages"
+       onclick="gYammerFox.changeTab('messages')"/>-->
+  <xul:spacer flex="1"/>
+  <xul:description class="yammerfox-reply" value="" xbl:inherits="" id="yammerfox-reply" />
+      </xul:hbox>
+    </content>
+  </binding>
+  
+  <binding id="yammerfox-popup">
+    <content>
+      <xul:vbox>
+  <xul:hbox class="yammerfox-popup-logo-box" align="center">
+    <xul:image class="yammerfox-popup-logo" 
+         onclick="gYammerFox.openBaseURL(); 
+            gYammerFox.closePopup(false); return false;" 
+         tooltiptext="&yammerfox.logo.tooltip;" 
+         src="chrome://yammerfox/content/logo-small.png" />
+    <xul:spacer flex="1"/>
+<!--    <xul:popupset>
+      <xul:menupopup id="yammerfox-accounts-popup" 
+         sortDirection="ascending"
+         onpopupshowing="gYammerFox.onAccountMenuShowing(this)"/>
+    </xul:popupset>
+    <xul:hbox class="yammerfox-current-account" align="right">
+      <xul:image class="yammerfox-current-account-icon" 
+           menu="yammerfox-accounts-popup"
+           xbl:inherits="src=user_profile_image_url" />
+      <xul:label anonid="currentUser"
+           class="yammerfox-current-account-name"
+           menu="yammerfox-accounts-popup"
+           tooltiptext="&yammerfox.changeAccount.tooltip;"/>
+    </xul:hbox>-->
+    <xul:image class="yammerfox-close-button" 
+         onclick="gYammerFox.closePopup(true);" 
+         tooltiptext="&yammerfox.closeButton.tooltip;"/>
+  </xul:hbox>
+  <xul:hbox classname="yammerfox-scrollbox">
+    <xul:scrollbox id="yammerfox-statusbox" 
+       class="yammerfox-statusbox" 
+       orient="vertical" sborient="vertical">
+      <children/>
+    </xul:scrollbox>
+    
+    <xul:vbox class="yammerfox-scrollbar">
+      <xul:slider id="yammerfox-slider" flex="1" orient="vertical" sborient="vertical" pageincrement="10" xbl:inherits="curpos,maxpos">
+        <xul:image class="yammerfox-scroll-thumb" flex="1"/>
+      </xul:slider>
+    </xul:vbox>
+
+  </xul:hbox>
+  <xul:vbox>
+    <xul:hbox anonid="toolbar" class="yammerfox-toolbar"/>
+
+    <xul:vbox flex="1" id="yammerfox-input-container">
+      <xul:textbox id="yammerfox-message-input" 
+       anonid="input"
+                         spellcheck="true"
+       tooltiptext="&yammerfox.enterStatus.tooltip;"
+       ontextreverted="return gYammerFox.onRevertText(this);"
+       align="center"
+       xbl:inherits="value=text"/>
+            <xul:progressmeter id="yammerfox-progressmeter" mode="undetermined" hidden="true"/>
+            <xul:description id="yammerfox-error-message" xbl:inherits="value=errorMessage" hidden="true"/>
+    </xul:vbox>
+
+  </xul:vbox>
+      </xul:vbox>
+    </content>
+
+    <handlers>
+      <handler event="input">
+  var text = event.originalTarget;
+        this.text = text.value;
+
+        if (text.value.length == 0) gYammerFox.resetInReplyTo();
+
+        this.showTextBox();
+      </handler>
+
+      <handler event="keypress" keycode="VK_RETURN">
+        gYammerFox.onSendMessage();
+        event.preventDefault();
+  event.stopPropagation();
+      </handler>
+
+      <handler event="keypress" keycode="VK_DOWN">
+          if (this.text.length == 0)  this.scrollBy(1);
+      </handler>
+
+      <handler event="keypress" keycode="VK_UP">
+          if (this.text.length == 0)  this.scrollBy(-1);
+      </handler>
+
+      <handler event="keypress" keycode="VK_ESCAPE" phase="capturing">
+        gYammerFox.onRevertText(this.input);
+      </handler>
+
+      <handler event="keypress" keycode="VK_TAB" phase="capturing">
+  <![CDATA[
+          event.preventDefault();
+    event.stopPropagation();
+
+    var tabs = ["timeline", "replies", "messages"];
+          for (var i = 0; i < tabs.length; ++i) {
+            if (this.activeTab == tabs[i]) {
+              var index = i + 1;
+              if (index == tabs.length) index = 0;
+              gYammerFox.changeTab(tabs[index]);
+              break;
+            }
+          }
+      ]]>
+      </handler>
+
+      <handler event="click">
+  if (event.originalTarget.nodeName == "xul:slider") {
+          var pos = event.originalTarget.getAttribute("curpos");
+          this.getScrollBoxObject().scrollTo(0, pos * 10);
+        }
+      </handler>
+
+      <handler event="DOMMouseScroll">
+      </handler>
+
+      <handler event="draggesture">
+        if (event.originalTarget.tagName == "xul:image") {
+          this.isDragging = true;
+        }
+      </handler>
+
+      <handler event="mousemove">
+        if (this.isDragging) {
+          var pos = event.originalTarget.getAttribute("curpos");
+          this.getScrollBoxObject().scrollTo(0, pos * 10);
+        }
+      </handler>
+
+      <handler event="mouseup">
+  this.isDragging = false;
+      </handler>
+    </handlers>
+
+    <implementation>
+      <field name="activeTab" />
+      <field name="isDragging">false</field>
+      <field name="curpos" />
+      <field name="text" />
+      <field name="input">
+        document.getAnonymousElementByAttribute(this, "anonid", "input");
+      </field>
+
+      <property name="message">
+  <setter>
+    this.text = val;
+    this.input.value = val;
+  </setter>
+      </property>
+
+      <property name="currentUser">
+  <setter>
+          this.setAttribute("autocompletesearchparam", val);
+          document.getAnonymousElementByAttribute(this, "anonid", "currentUser").value = val;
+        </setter>
+      </property>
+
+      <property name="currentUserIcon">
+  <setter>
+          this.setAttribute("user_profile_image_url", val);
+        </setter>
+      </property>
+
+      <property name="signedInAs">
+  <setter>
+          //document.getAnonymousElementByAttribute(this, "anonid", "currentUser").value = val;
+        </setter>
+      </property>
+
+      <constructor>
+        var obj = this;
+  document.getElementById("yammerfox-statusbox").addEventListener("DOMMouseScroll", function(e) {obj.onScroll(e)}, false);
+  document.getElementById("yammerfox-slider").addEventListener("DOMMouseScroll", function(e) {obj.onScroll(e)}, false);
+      </constructor>
+
+      <method name="onScroll">
+  <parameter name="event"/>
+  <body>
+          var step = (event.detail > 0) ? 1 : -1;
+          this.scrollBy(step);
+  </body>
+      </method>
+
+      <method name="scrollBy">
+  <parameter name="direction"/>
+  <body>
+          var box = this.getScrollBoxObject();
+          box.scrollByIndex(direction);
+          var y = {}
+    box.getPosition({}, y);
+    this.curpos = y.value / 10;
+    this.setAttribute("curpos", this.curpos);
+  </body>
+      </method>
+
+      <method name="getScrollBoxObject">
+  <body>
+          var box = document.getElementById("yammerfox-statusbox");
+          return box.boxObject.QueryInterface(Components.interfaces.nsIScrollBoxObject);
+  </body>
+      </method>
+
+      <method name="setActiveTab">
+  <parameter name="data"/>
+  <body>
+  <![CDATA[
+    var toolbar = document.getAnonymousElementByAttribute(this, "anonid", "toolbar"); 
+    try {
+      if (this.activeTab) 
+        document.getAnonymousElementByAttribute(toolbar, "anonid", this.activeTab).setAttribute("attr", null);
+      document.getAnonymousElementByAttribute(toolbar, "anonid", data.type).setAttribute("attr", "active");
+      this.activeTab = data.type;
+    } catch (e) { }
+
+    this.unread = data;
+    this.setUnreadCount();
+    this.recalcScrollbar(true);
+
+    this.show();
+
+    this.setAttribute("text", this.text); 
+    var input   = this.input;
+    input.value = this.text;
+
+    input.select();
+    input.focus();
+    ]]>
+  </body>
+  </method>
+
+  <method name="setUnreadCount">
+  <body>
+  <![CDATA[
+    var tabs = ["timeline", "replies", "messages"];
+    var toolbar = document.getAnonymousElementByAttribute(this, "anonid", "toolbar"); 
+    for (var i = 0; i < tabs.length; i++) {
+      var elem = document.getAnonymousElementByAttribute(toolbar, "anonid", tabs[i]);
+      elem.value = elem.getAttribute("defaultvalue");
+      if (this.unread[tabs[i]]) {
+        elem.setAttribute("unread", true);
+        elem.value += '(' + this.unread[tabs[i]] + ')';
+      } else {
+        elem.setAttribute("unread", false);
+      }
+    }
+    ]]>
+  </body>
+  </method>
+
+  <method name="markRead">
+  <body><![CDATA[
+          this.unread[this.activeTab] = 0;
+          this.setUnreadCount();
+        ]]></body>
+      </method>
+
+
+      <method name="resetTab">
+  <body><![CDATA[
+          var toolbar = document.getAnonymousElementByAttribute(this, "anonid", "toolbar"); 
+          try {
+            this.setUnreadCount();
+      if (this.activeTab) 
+        document.getAnonymousElementByAttribute(toolbar, "anonid", this.activeTab).setAttribute("attr", "active");
+      if (this.curpos)
+        this.getScrollBoxObject().scrollTo(0, this.curpos * 10);
+          }
+          catch (e) {}
+
+          this.currentUser = this.getAttribute("autocompletesearchparam");
+    this.setAttribute("text", this.text); 
+        ]]></body>
+      </method>
+
+      <method name="removeStatuses">
+  <body>
+    while(this.firstChild) this.removeChild(this.firstChild);
+  </body>
+      </method>
+
+      <method name="show">
+        <body>
+          this.style.display = "block";
+          document.getElementById("yammerfox-message-input").setAttribute("spellcheck", "true");
+        </body>
+      </method>
+
+      <method name="hide">
+  <body>
+    this.style.display = "none";
+    this.shrinkTextBox();
+          document.getElementById("yammerfox-message-input").setAttribute("spellcheck", "false");
+  </body>
+      </method>
+
+      <method name="resetText">
+  <body>
+          document.getElementById("yammerfox-message-input").value = this.text = "";
+          this.showTextBox(true);
+          this.shrinkTextBox();
+          this.input.focus();
+  </body>
+      </method>
+
+      <method name="isOpen">
+  <body>return (this.style.display != "none") ? true : false;</body>
+      </method>
+
+      <method name="addBalloon">
+  <parameter name="elem"/>
+  <body><![CDATA[
+          var attr = elem.getAttribute("attr");
+          if (this.activeTab == attr) {
+            for (var i = 0; i < this.childNodes.length; ++i) {
+              // check the element is already in the container
+              if (this.childNodes[i].id == elem.id) {
+                return;
+              }
+            }
+            this.insertBefore(elem, this.firstChild);
+            if (this.childNodes.length > 40) {
+              this.removeChild(this.lastChild);
+            }
+          }
+          this.unread[attr] = this.unread[attr] + 1;
+          this.setUnreadCount();
+  ]]></body>
+      </method>
+
+  <method name="recalcScrollbar">
+  <parameter name="force"/>
+  <body><![CDATA[
+    var lastElem = this.lastChild;
+    if (lastElem) {
+      var sb = this.getScrollBoxObject();
+      var height = {};
+      var currentHeight = {};
+
+      sb.getPosition({}, currentHeight);
+      sb.scrollToElement(lastElem);
+      sb.getPosition({}, height);
+
+
+      if (force) {
+        sb.scrollTo(0, 0);
+        this.setAttribute("curpos", 1);
+        this.setAttribute("maxpos", height.value / 10);
+        this.setAttribute("curpos", 0);
+        this.curpos = 0;
+      } else {
+        this.setAttribute("maxpos", height.value / 10);
+        sb.scrollTo(0, currentHeight.value);
+        this.setAttribute("curpos", this.curpos);
+      } 
+    }
+    ]]>
+    </body>
+    </method>
+
+      <method name="enlargeInputBox">
+        <parameter name="flag"/>
+        <body>
+          var box =document.getElementById("yammerfox-statusbox");
+          var prev = box.style.height;
+
+          box.style.height    = flag ? "230px" : "300px";
+
+          var container = document.getElementById("yammerfox-input-container");
+          container.style.height    = flag ? "100px" : "30px";
+
+          return (prev != box.style.height) ? true : false;
+        </body>
+      </method>
+
+      <method name="hideElement">
+        <parameter name="elem"/>
+        <parameter name="flag"/>
+  <body><![CDATA[
+          if (flag) {
+            elem.hidden = true;
+          }
+          else {
+            elem.removeAttribute("hidden");
+          } 
+  ]]></body>
+      </method>
+
+      <method name="showProgress">
+        <parameter name="flag"/>
+  <body><![CDATA[
+          var progress = document.getElementById("yammerfox-progressmeter");
+          this.hideElement(progress, !flag);
+          this.hideElement(this.input, flag);
+
+          this.enlargeInputBox(false);
+
+        ]]></body>
+      </method>
+
+      <method name="showErrorMessage">
+        <parameter name="flag"/>
+  <body><![CDATA[
+
+          var messagebox = document.getElementById("yammerfox-error-message");
+          var progress   = document.getElementById("yammerfox-progressmeter");
+
+          this.hideElement(messagebox, !flag);
+          if (flag) {
+            this.hideElement(progress, flag);
+            this.enlargeInputBox(false);
+          }
+          else {
+            this.hideElement(progress, true);
+            this.hideElement(this.input, flag);
+            this.enlargeInputBox(true);
+          } 
+
+        ]]></body>
+      </method>
+
+      <method name="showTextBox">
+        <parameter name="force"/>
+  <body><![CDATA[
+          var rows = (this.input.value.length != 0) ? 5 : 0;
+          if (rows == 0) return;
+
+          var changed = this.enlargeInputBox(rows);
+
+          this.input.setAttribute("rows", rows);
+          this.input.setAttribute("multiline", rows ? "true" : "false");
+
+          if (force || changed) {
+            setTimeout("gYammerFox.setFocusToInput()", 50);
+          }
+        ]]></body>
+      </method>
+
+      <method name="shrinkTextBox">
+        <parameter name="force"/>
+  <body><![CDATA[
+          if (this.input.value.length == 0) {
+            this.enlargeInputBox(false);
+            this.input.setAttribute("rows", 0);
+            this.input.setAttribute("multiline", "false");
+          }
+        ]]></body>
+      </method>
+
+
+    </implementation>
+  </binding>
+</bindings>
+
