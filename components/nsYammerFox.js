@@ -5,9 +5,9 @@ const NETWORK_TIMEOUT_TIME = 120;
 const MAX_STORED_MESSAGES = 40;
 
 //const BASE_URL = "http://localhost:3000/";
-//const BASE_URL = "http://aa.com:3000/";
+const BASE_URL = "http://aa.com:3000/";
 //const BASE_URL = "https://staging.yammer.com/";
-const BASE_URL = "https://www.yammer.com/";
+//const BASE_URL = "https://www.yammer.com/";
 const API_URL  = BASE_URL+"api/v1/";
 const APP_NAME = "YammerFox";
 const YAMMERFOXV = "1.0.3";
@@ -965,45 +965,27 @@ var yammerfox_prototypes = {
   },
 
   setRefs: function(references) {
-    this._user_refs = {}
-    this._group_refs = {}
-    this._message_refs = {}
-    this._thread_refs = {}
-    this._guide_refs = {}
+    this._refs_by_type = {}
     for (i in references) {
-      if (references[i].type == 'user')
-        this._user_refs[references[i].id] = references[i];
-      else if (references[i].type == 'group')
-        this._group_refs[references[i].id] = references[i];
-      else if (references[i].type == 'message')
-        this._message_refs[references[i].id] = references[i];
-      else if (references[i].type == 'thread')
-        this._thread_refs[references[i].id] = references[i];
-      else if (references[i].type == 'guide')
-        this._guide_refs[references[i].id] = references[i];
+      if (this._refs_by_type[references[i].type] == null)
+        this._refs_by_type[references[i].type] = {};
+      this._refs_by_type[references[i].type][references[i].id] = references[i];
     }
   },
-  
-  guide_or_user_info: function(type, id) {
-    if (type == 'guide')
-      return this._guide_refs[id];
-    if (type == 'user')
-      return this._user_refs[id];
-  },
-  
+
   messages_following: function(obj, req) {  
     this.setRefs(obj.references);
     
     for (i in obj.messages) {
       try {
-        var guide_or_user = this.guide_or_user_info(obj.messages[i].sender_type, obj.messages[i].sender_id);
-        obj.messages[i].full_name = guide_or_user.full_name;
-        obj.messages[i].name = guide_or_user.name;
-        obj.messages[i].mugshot_url = guide_or_user.mugshot_url;
+        var reference = this._refs_by_type[obj.messages[i].sender_type][obj.messages[i].sender_id];
+        obj.messages[i].full_name = reference.full_name;
+        obj.messages[i].name = reference.name;
+        obj.messages[i].mugshot_url = reference.mugshot_url;
   
         if (obj.messages[i].replied_to_id) {
-          guide_or_user = this.guide_or_user_info(this._message_refs[obj.messages[i].replied_to_id].sender_type, this._message_refs[obj.messages[i].replied_to_id].sender_id);
-          obj.messages[i].reply_name = guide_or_user.name;
+          reference = this._refs_by_type[this._refs_by_type['message'][obj.messages[i].replied_to_id].sender_type][this._refs_by_type['message'][obj.messages[i].replied_to_id].sender_id];
+          obj.messages[i].reply_name = reference.name;
           var trimed_text = this._message_refs[obj.messages[i].replied_to_id].body.plain;
           if (trimed_text.length > 160)
             trimed_text = trimed_text.substr(0, 160) + "...";

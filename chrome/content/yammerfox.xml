@@ -163,9 +163,6 @@
       <handler event="input">
   var text = event.originalTarget;
         this.text = text.value;
-
-        if (text.value.length == 0) gYammerFox.resetInReplyTo();
-
         this.showTextBox();
       </handler>
 
