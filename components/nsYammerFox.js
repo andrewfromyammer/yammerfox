@@ -5,12 +5,12 @@ const NETWORK_TIMEOUT_TIME = 120;
 const MAX_STORED_MESSAGES = 40;
 
 //const BASE_URL = "http://localhost:3000/";
-const BASE_URL = "http://aa.com:3000/";
-//const BASE_URL = "https://staging.yammer.com/";
+//const BASE_URL = "http://aa.com:3000/";
+const BASE_URL = "https://staging.yammer.com/";
 //const BASE_URL = "https://www.yammer.com/";
 const API_URL  = BASE_URL+"api/v1/";
 const APP_NAME = "YammerFox";
-const YAMMERFOXV = "1.0.3";
+const YAMMERFOXV = "1.0.4";
 
 const STATE_ACTIVE  = 0;
 const STATE_IDLE    = 1;
@@ -974,6 +974,12 @@ var yammerfox_prototypes = {
   },
 
   messages_following: function(obj, req) {  
+    try {
+      poll_in_milli_secs = ((obj.meta.requested_poll_interval / 60) * 60) * 1000;
+      if (poll_in_milli_secs > this._interval)
+        this._interval = poll_in_milli_secs;
+    } catch (e) {}
+    
     this.setRefs(obj.references);
     
     for (i in obj.messages) {
