@@ -437,8 +437,19 @@ YammerFox.prototype = {
       elem.setAttribute("time", time_and_group);
       
       var trimed_text = msg.body.plain;
-      if (trimed_text.length > 160)
-        trimed_text = trimed_text.substr(0, 160) + "...";
+      if (trimed_text.length > 160) {
+        var next_space = 0;
+        for (var i=160; i<trimed_text.length; i++) {
+          if (trimed_text.charAt(i) == ' ') {
+            next_space = i;
+            break;
+          }
+        }
+        if (next_space == 0)
+          next_space = trimed_text.length-1;
+        
+        trimed_text = trimed_text.substr(0, next_space) + " ...";
+      }
       
       var textnode = this.replaceLinkText(trimed_text);
       for (i in msg.attachments) {
