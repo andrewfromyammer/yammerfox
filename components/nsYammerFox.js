@@ -4,10 +4,7 @@ const CONTRACT_ID = "@yammer.inc/yammerfox;1";
 const NETWORK_TIMEOUT_TIME = 120;
 const MAX_STORED_MESSAGES = 40;
 
-//const BASE_URL = "http://localhost:3000/";
-//const BASE_URL = "http://aa.com:3000/";
-const BASE_URL = "https://staging.yammer.com/";
-//const BASE_URL = "https://www.yammer.com/";
+const BASE_URL = "https://www.yammer.com/";
 const API_URL  = BASE_URL+"api/v1/";
 const APP_NAME = "YammerFox";
 const YAMMERFOXV = "1.0.4";
@@ -526,6 +523,11 @@ var yammerfox_prototypes = {
   },
 
   getRecent: function(obj) {
+    if (this._no_cookie) {
+      if (this._timer)
+        this._timer.cancel();
+      this.setNextTimer();
+    }
     var type = obj.type;
     if (this._accounts[this._user]) {
       var msg = this.getNumUnread();
@@ -787,7 +789,6 @@ var yammerfox_prototypes = {
 
     case 406:
       this._no_cookie = true;
-      this.setNextTimer();
       break;
 
     case 403:
