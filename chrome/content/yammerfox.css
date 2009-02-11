@@ -42,7 +42,12 @@
 
 .yammerfox-status[unread="true"]
 { 
-  background: #333333;
+  background: #33333;
+}
+
+.yammerfox-status[priv="true"]
+{ 
+  background: #565656;
 }
 
 .yammerfox-status:hover { 

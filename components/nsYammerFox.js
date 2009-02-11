@@ -4,10 +4,11 @@ const CONTRACT_ID = "@yammer.inc/yammerfox;1";
 const NETWORK_TIMEOUT_TIME = 120;
 const MAX_STORED_MESSAGES = 40;
 
+//const BASE_URL = "http://aa.com:3000/";
 const BASE_URL = "https://www.yammer.com/";
 const API_URL  = BASE_URL+"api/v1/";
 const APP_NAME = "YammerFox";
-const YAMMERFOXV = "1.0.4";
+const YAMMERFOXV = "1.0.5";
 
 const STATE_ACTIVE  = 0;
 const STATE_IDLE    = 1;
@@ -985,6 +986,9 @@ var yammerfox_prototypes = {
     
     for (i in obj.messages) {
       try {
+        obj.messages[i].priv_text = "";
+        obj.messages[i].priv_msg = false;
+        obj.messages[i].priv_group = false;
         var reference = this._refs_by_type[obj.messages[i].sender_type][obj.messages[i].sender_id];
         obj.messages[i].full_name = reference.full_name;
         obj.messages[i].name = reference.name;
@@ -993,15 +997,27 @@ var yammerfox_prototypes = {
         if (obj.messages[i].replied_to_id) {
           reference = this._refs_by_type[this._refs_by_type['message'][obj.messages[i].replied_to_id].sender_type][this._refs_by_type['message'][obj.messages[i].replied_to_id].sender_id];
           obj.messages[i].reply_name = reference.name;
-          var trimed_text = this._message_refs[obj.messages[i].replied_to_id].body.plain;
+          var trimed_text = this._refs_by_type['message'][obj.messages[i].replied_to_id].body.plain;
           if (trimed_text.length > 160)
             trimed_text = trimed_text.substr(0, 160) + "...";
    
           obj.messages[i].reply_txt = trimed_text;
-          obj.messages[i].thread_url = this._thread_refs[obj.messages[i].thread_id].web_url;
+          obj.messages[i].thread_url = this._refs_by_type['thread'][obj.messages[i].thread_id].web_url;
         }
-        if (obj.messages[i].group_id)
-          obj.messages[i].group_name = this._group_refs[obj.messages[i].group_id].name;
+        if (obj.messages[i].group_id) {
+          var group = this._refs_by_type['group'][obj.messages[i].group_id];
+          obj.messages[i].group_name = group.name;
+          if (group.privacy == 'private') {
+            obj.messages[i].group_name = group.name + " (private)";
+            obj.messages[i].priv_group = true;
+          }
+        }
+        if (obj.messages[i].direct_to_id) {
+          obj.messages[i].direct_name = this._refs_by_type['user'][obj.messages[i].direct_to_id].name;
+          obj.messages[i].priv_text = " (Private)";
+          obj.messages[i].priv_msg = true;
+        }
+          
       } catch (e) { }
     }
     

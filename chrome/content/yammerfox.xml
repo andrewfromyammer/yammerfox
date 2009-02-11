@@ -33,6 +33,9 @@
         <xul:image class="yammerfox-status-usericon" align="top" 
        xbl:inherits="src=profile_image_url, tooltiptext=name, href, unread" />
       </xul:stack>
+      <xul:stack>
+        <xul:image xbl:inherits="src=lock_url"/>
+      </xul:stack>
       <xul:spacer flex="1" />
     </xul:vbox>
     <!-- messages -->

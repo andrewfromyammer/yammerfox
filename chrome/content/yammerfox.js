@@ -414,16 +414,29 @@ YammerFox.prototype = {
     elem.className = "yammerfox-status";
     elem.id = "tooltip-balloon-" + msg.id;
     elem.setAttribute("attr", "timeline");
-
+        
     elem.setAttribute("messageId", msg.id);
 
     try {
       elem.setAttribute("href", this.baseURLFromComponent() + "users/" + msg.name);
 
-      if (msg.reply_name)
-        elem.setAttribute("screen_name", msg.name + " re: " + msg.reply_name);
+      if (msg.priv_msg) { 
+        elem.setAttribute("priv", true);
+        elem.setAttribute("lock_url", "chrome://yammerfox/content/lock.png");
+      }
+      
+      if (msg.priv_group) {
+        elem.setAttribute("lock_url", "chrome://yammerfox/content/lock.png");
+      }
+
+      if (msg.direct_name && msg.reply_name == null)
+        elem.setAttribute("screen_name", msg.name + " to: " + msg.direct_name + msg.priv_text);
+      else if (msg.reply_name)
+        elem.setAttribute("screen_name", msg.name + " re: " + msg.reply_name + msg.priv_text);
       else
         elem.setAttribute("screen_name", msg.name);
+        
+        
       elem.setAttribute("name", msg.name);
 
       if (highlight) {
