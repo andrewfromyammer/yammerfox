@@ -4,8 +4,8 @@ const CONTRACT_ID = "@yammer.inc/yammerfox;1";
 const NETWORK_TIMEOUT_TIME = 120;
 const MAX_STORED_MESSAGES = 40;
 
-const BASE_URL = "http://aa.com:3000/";
-//const BASE_URL = "https://www.yammer.com/";
+//const BASE_URL = "http://aa.com:3000/";
+const BASE_URL = "https://www.yammer.com/";
 const API_URL  = BASE_URL+"api/v1/";
 const APP_NAME = "YammerFox";
 const YAMMERFOXV = "1.0.6";
@@ -410,7 +410,7 @@ var yammerfox_prototypes = {
   },
 
   handleCommand: function(data) {
-    var msg = eval('(' + data + ')');
+    var msg = eval('('+data+')');
     this[msg.command](msg);
   },
 
@@ -764,6 +764,13 @@ var yammerfox_prototypes = {
       }
     }
   },
+  
+  jsonDecoder: function(data) {
+    var Ci = Components.interfaces;
+    var Cc = Components.classes;
+    var nativeJSON = Cc["@mozilla.org/dom/json;1"].createInstance(Ci.nsIJSON);
+    return nativeJSON.decode(data);
+  },
 
   // Network handler
   //
@@ -775,7 +782,6 @@ var yammerfox_prototypes = {
 
     switch (Number(req.status)) {
     case 400:
-      this.rateLimitExceeded(req);
       break;
 
     case 401:
@@ -814,7 +820,7 @@ var yammerfox_prototypes = {
       if (!req.responseText.match(/^\s*$/)) {
         req.responseText = req.responseText.replace(/Couldn\'t find Status with ID=\d+,/, '');
         try {
-          var resp = eval('(' + req.responseText + ')');
+          var resp = this.jsonDecoder(req.responseText);
         }
         catch (e) {
           this.reportError("An error occurred while requesting " + req.__url);
@@ -893,16 +899,6 @@ var yammerfox_prototypes = {
       this._timer.cancel();
     }
     this.setNextTimer();
-  },
-
-  rateLimitExceeded: function(req) {
-    try {
-      var resp = eval('(' + req.responseText + ')');
-      this.notifyStatus("internalError", resp.error);
-    }
-    catch (e) {}
-
-    this.get('account.rate_limit_status');
   },
 
   setInterval: function() {
