@@ -6,4 +6,5 @@ pref("extensions.yammerfox.yammerUser", "");
 pref("extensions.yammerfox.login", true);
 pref("extensions.yammerfox.sound", true);
 pref("extensions.yammerfox.session", "");
-pref("extensions.yammerfox.debug", true);
+pref("extensions.yammerfox.logDebug", false);
+pref("extensions.yammerfox.firstTime", true);

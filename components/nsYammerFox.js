@@ -4,11 +4,11 @@ const CONTRACT_ID = "@yammer.inc/yammerfox;1";
 const NETWORK_TIMEOUT_TIME = 120;
 const MAX_STORED_MESSAGES = 40;
 
-//const BASE_URL = "http://aa.com:3000/";
-const BASE_URL = "https://www.yammer.com/";
+const BASE_URL = "http://aa.com:3000/";
+//const BASE_URL = "https://www.yammer.com/";
 const API_URL  = BASE_URL+"api/v1/";
 const APP_NAME = "YammerFox";
-const YAMMERFOXV = "1.0.5";
+const YAMMERFOXV = "1.0.6";
 
 const STATE_ACTIVE  = 0;
 const STATE_IDLE    = 1;
@@ -315,7 +315,7 @@ Session.prototype = {
     var pref = Components.classes['@mozilla.org/preferences-service;1']
       .getService(Components.interfaces.nsIPrefBranch);
 
-    if (pref.getBoolPref("extensions.yammerfox.debug")) {
+    if (pref.getBoolPref("extensions.yammerfox.logDebug")) {
       Components.utils.reportError(msg);
     }
     this.log(msg);
@@ -325,7 +325,7 @@ Session.prototype = {
     var pref = Components.classes['@mozilla.org/preferences-service;1']
       .getService(Components.interfaces.nsIPrefBranch);
 
-    if (pref.getBoolPref("extensions.yammerfox.debug")) {
+    if (pref.getBoolPref("extensions.yammerfox.logDebug")) {
       if (this._console == null) 
         this._console = Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces.nsIConsoleService);
       this._console.logStringMessage(msg);

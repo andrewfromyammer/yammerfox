@@ -4,7 +4,7 @@
   <Description about="urn:mozilla:install-manifest">
     <em:id>yammerfox@yammer-inc.com</em:id>
     <em:name>YammerFox</em:name>
-    <em:version>1.0.5</em:version>
+    <em:version>1.0.6</em:version>
     <em:creator>Yammer, Inc.</em:creator>
     <em:description>Lets you know when you have new yammer messages.</em:description>
     <em:homepageURL>http://www.yammer.com/</em:homepageURL>

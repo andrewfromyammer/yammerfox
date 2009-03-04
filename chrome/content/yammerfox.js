@@ -55,6 +55,12 @@ YammerFox.prototype = {
   },
 
   load: function() {
+  
+    var pref = Components.classes['@mozilla.org/preferences-service;1'].getService(Components.interfaces.nsIPrefBranch);
+    if (pref.getBoolPref("extensions.yammerfox.firstTime")) {
+      this.openURL(this.baseURLFromComponent());
+      pref.setBoolPref("extensions.yammerfox.firstTime", false);
+    }
     
     // Don't init YammerFox when the window is popup.
     if (window.toolbar.visible == false) {
@@ -459,7 +465,7 @@ YammerFox.prototype = {
           }
         }
         if (next_space == 0)
-          next_space = trimed_text.length-1;
+          next_space = trimed_text.length;
         
         trimed_text = trimed_text.substr(0, next_space) + " ...";
       }
@@ -1014,7 +1020,7 @@ YammerFox.prototype = {
     var pref = Components.classes['@mozilla.org/preferences-service;1']
       .getService(Components.interfaces.nsIPrefBranch);
 
-    if (pref.getBoolPref("extensions.yammerfox.debug")) {
+    if (pref.getBoolPref("extensions.yammerfox.logDebug")) {
       if (this._console == null) 
         this._console = Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces.nsIConsoleService);
       this._console.logStringMessage(msg);
