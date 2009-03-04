@@ -18,6 +18,23 @@ const APPEND_TIMELINE = 0;
 const APPEND_MESSAGES = 1;
 const APPEND_IGNORE   = 2;
 
+var JSON = {
+  fromString: function JSON_fromString(aJSONString) {
+    if (!this.isMostlyHarmless(aJSONString))
+      throw new SyntaxError("No valid JSON string!");
+    
+    var s = new Components.utils.Sandbox("about:blank");
+    return Components.utils.evalInSandbox("(" + aJSONString + ")", s);
+  },
+
+  isMostlyHarmless: function JSON_isMostlyHarmless(aString) {
+    const maybeHarmful = /[^,:{}\[\]0-9.\-+Eaeflnr-u \n\r\t]/;
+    const jsonStrings = /"(\\.|[^"\\\n\r])*"/g;
+    
+    return !maybeHarmful.test(aString.replace(jsonStrings, ""));
+  }
+};
+
 function HttpRequest() {
   this.responseText = "";
   this.status = 0;
@@ -765,13 +782,6 @@ var yammerfox_prototypes = {
     }
   },
   
-  jsonDecoder: function(data) {
-    var Ci = Components.interfaces;
-    var Cc = Components.classes;
-    var nativeJSON = Cc["@mozilla.org/dom/json;1"].createInstance(Ci.nsIJSON);
-    return nativeJSON.decode(data);
-  },
-
   // Network handler
   //
   onLoad: function(req) {
@@ -820,7 +830,7 @@ var yammerfox_prototypes = {
       if (!req.responseText.match(/^\s*$/)) {
         req.responseText = req.responseText.replace(/Couldn\'t find Status with ID=\d+,/, '');
         try {
-          var resp = this.jsonDecoder(req.responseText);
+          var resp = JSON.fromString(req.responseText);
         }
         catch (e) {
           this.reportError("An error occurred while requesting " + req.__url);

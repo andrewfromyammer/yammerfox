@@ -26,3 +26,4 @@ if false
 end
 
 exec('/Applications/Firefox.app/Contents/MacOS/firefox -P default')
+#exec('/Users/aa/Desktop/Firefox.app/Contents/MacOS/firefox -P default')
