@@ -8,7 +8,7 @@ const MAX_STORED_MESSAGES = 40;
 const BASE_URL = "https://www.yammer.com/";
 const API_URL  = BASE_URL+"api/v1/";
 const APP_NAME = "YammerFox";
-const YAMMERFOXV = "1.0.6";
+const YAMMERFOXV = "1.0.7";
 
 const STATE_ACTIVE  = 0;
 const STATE_IDLE    = 1;
