@@ -1,6 +1,6 @@
 #!/opt/local/bin/ruby
 
-# note:
+# note: test
 # Failed to load XPCOM component: /Users/aa/ginc/yammerfox/components/nsIYammerFox.idl
 # is normal to see, because the component doesn't exist when first run
 
