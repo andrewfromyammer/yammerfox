@@ -1,4 +1,0 @@
-content yammerfox chrome/content/
-overlay chrome://browser/content/browser.xul chrome://yammerfox/content/yammerfox.xul
-overlay chrome://emusic/content/startup.xul chrome://yammerfox/content/yammerfox.xul
-locale yammerfox en-US chrome/locale/en-US/
